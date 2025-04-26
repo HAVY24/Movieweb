@@ -22,7 +22,6 @@ const Banner = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -35,27 +34,23 @@ const Banner = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 7000,
+    autoplaySpeed: 4500,
     pauseOnHover: true,
     arrows: !isMobile,
     beforeChange: (current, next) => setCurrentSlide(next),
     appendDots: (dots) => (
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <ul className="flex space-x-2">{dots}</ul>
+      <div className="absolute bottom-2 md:bottom-8 left-1/2 transform -translate-x-1/2">
+        <ul className="flex space-x-1">{dots}</ul>
       </div>
     ),
     customPaging: (i) => (
       <div
-        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-          currentSlide === i ? "bg-red-600 w-8" : "bg-gray-400 bg-opacity-50"
+        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+          currentSlide === i
+            ? "bg-red-600 w-4 md:w-6"
+            : "bg-gray-400 bg-opacity-50"
         }`}
-      >
-        {currentSlide === i && (
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {bannerData[i].title}
-          </div>
-        )}
-      </div>
+      />
     ),
   };
 
@@ -79,33 +74,38 @@ const Banner = () => {
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<StarIcon key={`full-${i}`} className="text-yellow-400" />);
-    }
-
-    if (hasHalfStar) {
-      stars.push(<StarHalfIcon key="half" className="text-yellow-400" />);
-    }
-
-    for (let i = 0; i < emptyStars; i++) {
       stars.push(
-        <StarBorderIcon key={`empty-${i}`} className="text-yellow-400" />
+        <StarIcon
+          key={`full-${i}`}
+          className="text-yellow-400 text-sm md:text-base"
+        />
       );
     }
-
+    if (hasHalfStar) {
+      stars.push(
+        <StarHalfIcon
+          key="half"
+          className="text-yellow-400 text-sm md:text-base"
+        />
+      );
+    }
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <StarBorderIcon
+          key={`empty-${i}`}
+          className="text-yellow-400 text-sm md:text-base"
+        />
+      );
+    }
     return stars;
   };
 
-  const nextSlide = () => {
-    sliderRef.current.slickNext();
-  };
-
-  const prevSlide = () => {
-    sliderRef.current.slickPrev();
-  };
+  const nextSlide = () => sliderRef.current.slickNext();
+  const prevSlide = () => sliderRef.current.slickPrev();
 
   return (
     <div className="relative w-full overflow-hidden shadow-xl">
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Hidden on mobile */}
       {!isMobile && (
         <>
           <button
@@ -129,134 +129,134 @@ const Banner = () => {
         {bannerData.map((item) => (
           <div key={item.id} className="focus:outline-none">
             <div
-              className="w-full h-[500px] md:h-[700px] bg-cover bg-center relative"
+              className="w-full h-[300px] sm:h-[400px] md:h-[600px] bg-cover bg-center relative"
               style={{ backgroundImage: `url(${item.bgImage})` }}
             >
-              {/* Gradient Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-              <div className="absolute inset-0 bg-black/40" />
+              {/* Gradient Overlay - Adjusted for mobile */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-              {/* Content Container */}
-              <div className="relative z-20 w-full h-full container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-center md:justify-between gap-8 md:gap-12 py-12">
-                {/* Text Content */}
-                <div className="w-full md:w-1/2 flex flex-col space-y-4 md:space-y-6 text-white">
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-white bg-gradient-to-r from-red-600 to-red-400 py-1 px-3 text-xs md:text-sm rounded-full font-medium shadow">
+              {/* Content Container - Stacked vertically on mobile */}
+              <div className="relative z-20 w-full h-full container mx-auto px-3 sm:px-4 md:px-6 flex flex-col items-center justify-end md:justify-between md:flex-row gap-3 sm:gap-4 md:gap-8 pb-4 md:py-10">
+                {/* Text Content - Full width on mobile */}
+                <div className="w-full md:w-1/2 lg:w-2/3 flex flex-col items-center md:items-start text-center md:text-left space-y-2 sm:space-y-3 md:space-y-4 text-white px-2 sm:px-4">
+                  {/* Tags - Single row with overflow */}
+                  <div className="w-full flex flex-nowrap justify-center md:justify-start gap-1 sm:gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                    <span className="flex-shrink-0 bg-gradient-to-r from-red-600 to-red-400 py-1 px-2 text-xs rounded-full font-medium shadow">
                       {item.genre}
                     </span>
-                    {item.tags.map((tag, index) => (
+                    {item.tags.slice(0, 3).map((tag, index) => (
                       <span
                         key={index}
-                        className="text-white bg-gray-700/80 py-1 px-3 text-xs md:text-sm rounded-full font-medium"
+                        className="flex-shrink-0 bg-gray-700/80 py-1 px-2 text-xs rounded-full font-medium"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
 
-                  {/* Title */}
-                  <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight drop-shadow-lg">
+                  {/* Title - Adjusted size for mobile */}
+                  <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight drop-shadow-lg px-2">
                     {item.title}
                   </h2>
 
-                  {/* Meta Info */}
-                  <div className="flex flex-wrap items-center gap-4 text-white text-sm md:text-base">
-                    <div className="flex items-center space-x-1">
+                  {/* Meta Info - Compact layout */}
+                  <div className="flex flex-wrap justify-center md:justify-start items-center gap-1 text-xs sm:text-sm">
+                    <div className="flex items-center space-x-0.5">
                       {renderRatingStars(item.rating)}
-                      <span className="ml-1 font-medium">
+                      <span className="ml-0.5 font-medium">
                         {item.rating.toFixed(1)}
                       </span>
                     </div>
+                    <span>•</span>
                     <span className="font-medium">{item.year}</span>
                     {item.duration && (
-                      <span className="font-medium">{item.duration}</span>
+                      <>
+                        <span>•</span>
+                        <span className="font-medium">{item.duration}</span>
+                      </>
                     )}
                     {item.episodes && (
-                      <span className="font-medium">{item.episodes}</span>
+                      <>
+                        <span>•</span>
+                        <span className="font-medium">{item.episodes}</span>
+                      </>
                     )}
                   </div>
 
-                  {/* Description */}
-                  <div className="hidden md:block">
-                    <p className="text-gray-200 text-lg leading-relaxed max-w-2xl">
-                      {item.fullDescription}
-                    </p>
-                  </div>
-                  <div className="block md:hidden">
-                    <p className="text-gray-200 text-sm leading-relaxed">
-                      {item.shortDescription}
+                  {/* Description - Limited lines on mobile */}
+                  <div className="w-full max-w-xs sm:max-w-md md:max-w-lg">
+                    <p className="text-gray-200 text-xs sm:text-sm md:text-base leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
+                      {isMobile ? item.shortDescription : item.fullDescription}
                     </p>
                   </div>
 
-                  {/* Buttons */}
-                  <div className="flex flex-wrap gap-3">
-                    <button className="bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
-                      <span>Chi tiết</span>
+                  {/* Buttons - Smaller on mobile */}
+                  <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-1 sm:mt-0">
+                    <button className="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1 px-3 sm:py-1.5 sm:px-4 rounded-full transition-all hover:translate-y-[-1px] text-xs sm:text-sm">
+                      Chi tiết
                     </button>
                     <button
-                      className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] flex items-center"
+                      className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 sm:py-1.5 sm:px-4 rounded-full transition-all hover:translate-y-[-1px] flex items-center text-xs sm:text-sm"
                       onClick={() => openVideo(item.videoUrl)}
                     >
-                      <PlayCircleOutlineIcon className="mr-2" />
-                      <span>Xem ngay</span>
+                      <PlayCircleOutlineIcon className="mr-1 text-sm" />
+                      Xem ngay
                     </button>
                   </div>
 
-                  {/* Cast */}
+                  {/* Cast - Only show first 2 on mobile */}
                   {item.cast && (
-                    <div className="text-gray-300 text-sm">
+                    <div className="text-gray-300 text-xs sm:text-sm w-full truncate text-center md:text-left">
                       <span className="opacity-80">Diễn viên: </span>
                       <span className="font-medium">
-                        {item.cast.join(", ")}
+                        {item.cast.slice(0, isMobile ? 2 : 3).join(", ")}
+                        {item.cast.length > (isMobile ? 2 : 3) ? "..." : ""}
                       </span>
                     </div>
                   )}
                 </div>
 
-                {/* Poster Image */}
-                <div className="w-full md:w-1/2 flex justify-center">
-                  <div className="relative w-[250px] h-[375px] md:w-[320px] md:h-[480px] group">
-                    {/* Image */}
-                    <img
-                      src={item.posterImage}
-                      alt={item.title}
-                      className="w-full h-full object-cover rounded-lg shadow-2xl transform group-hover:scale-105 transition-transform duration-300"
-                    />
-
-                    {/* Fixed Overlay */}
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300 flex items-center justify-center overflow-hidden">
-                      <button
-                        className="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full opacity-0 group-hover:opacity-100 transform group-hover:scale-110 transition-all duration-300"
-                        onClick={() => openVideo(item.videoUrl)}
-                      >
-                        <PlayCircleOutlineIcon className="mr-2 text-xl" />
-                        <span>Xem trailer</span>
-                      </button>
+                {/* Poster - Smaller and centered on mobile */}
+                {!isMobile && (
+                  <div className="hidden md:flex w-[150px] h-[225px] sm:w-[180px] sm:h-[270px] md:w-[220px] md:h-[330px] lg:w-[280px] lg:h-[420px] justify-center relative z-30">
+                    <div className="relative w-full h-full group">
+                      <img
+                        src={item.posterImage}
+                        alt={item.title}
+                        className="w-full h-full object-cover rounded-lg md:rounded-xl shadow-lg transition duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 rounded-lg md:rounded-xl transition-all duration-300 flex items-center justify-center">
+                        <button
+                          onClick={() => openVideo(item.videoUrl)}
+                          className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-2 sm:py-1.5 sm:px-3 rounded-full transform hover:scale-105 transition-all duration-300 flex items-center text-xs sm:text-sm"
+                        >
+                          <PlayCircleOutlineIcon className="mr-1 text-xs sm:text-sm" />
+                          Trailer
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
         ))}
       </Slider>
 
-      {/* Video Modal */}
+      {/* Video Modal - Smaller on mobile */}
       {showVideo && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-          <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-2 sm:p-4">
+          <div className="relative w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
             <button
               onClick={closeVideo}
-              className="absolute top-4 right-4 z-50 bg-black/50 text-white p-2 rounded-full hover:bg-white hover:text-black transition-all duration-300"
-              aria-label="Đóng video"
+              className="absolute top-1 right-1 sm:top-2 sm:right-2 z-50 bg-black/50 text-white p-1 sm:p-2 rounded-full hover:bg-white hover:text-black transition-all duration-300"
             >
-              <CloseIcon className="text-2xl" />
+              <CloseIcon className="text-lg sm:text-xl" />
             </button>
             <iframe
               className="w-full h-full"
               src={currentVideo}
-              title={`${bannerData[currentSlide]?.title} trailer`}
+              title="Trailer"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               frameBorder="0"
